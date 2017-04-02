@@ -1,9 +1,7 @@
 
-#Definition of the unit cell
-acell 10 10 10    # The keyword "acell" refers to the
-                  # lengths of the primitive vectors (in Bohr)
-#rprim 1 0 0  0 1 0  0 0 1 # This line, defining orthogonal primitive vectors,
-                           # is commented, because it is precisely the default value of rprim
+#Definition of the unit cell (data from https://materialsproject.org/materials/mp-23152/)
+acell 4.798E+00 4.798E+00 4.798E+00 angstrom
+angdeg 57.263 57.263 57.263
 
 #Definition of the atom types
 ntypat 1          # There is only one type of atom
@@ -16,10 +14,9 @@ znucl 83          # The keyword "znucl" refers to the atomic number of the
 #Definition of the atoms
 natom 2           # There are two atoms
 typat 1 1         # They both are of type 1
-xcart             # This keyword indicates that the location of the atoms
-                  # will follow, one triplet of number for each atom
-  -0.7 0.0 0.0    # Triplet giving the cartesian coordinates of atom 1, in Bohr
-   0.7 0.0 0.0    # Triplet giving the cartesian coordinates of atom 2, in Bohr
+
+xred 0.2344 0.2344 0.2344
+     0.7656 0.7656 0.7656
 
 #Definition of the planewave basis set
 ecut 10.0         # Maximal plane-wave kinetic energy cut-off, in Hartree
