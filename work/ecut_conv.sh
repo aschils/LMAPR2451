@@ -12,6 +12,11 @@ ecut="1"
 
 has_converged="0"
 
+ecut_vec=""
+etotal_vec=""
+
+first_iter=true
+
 while [ "$has_converged" -ne "1" ]
 do
 
@@ -41,6 +46,16 @@ tbase1_x
   bc_arg="$prev_etotal - $cur_etotal < $delta_etotal_conv"
   has_converged=$(bc <<< $bc_arg)
 
+  if $first_iter;
+  then
+    ecut_vec="$ecut"
+    etotal_vec="$cur_etotal"
+    first_iter=false
+  else
+    ecut_vec="$ecut_vec $ecut"
+    etotal_vec="$etotal_vec $cur_etotal"
+  fi
+
   echo $ecut
   echo $cur_etotal
 
@@ -48,3 +63,19 @@ tbase1_x
   ((ecut++))
 
 done
+
+python << END
+
+import matplotlib.pyplot as plt
+
+ecut_vec = map(int, "$ecut_vec".split(' '))
+etotal_vec= map(float, "$etotal_vec".split(' '))
+
+print(ecut_vec)
+print(etotal_vec)
+
+plt.plot(ecut_vec, etotal_vec)
+plt.xlabel('ecut')
+plt.ylabel('etotal')
+plt.show()
+END
