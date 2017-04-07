@@ -42,10 +42,33 @@ occopt 7
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
  optforces 1
 
- #Definition of the k-point grid
- kptopt 1
- ngkpt 5 5 5       # This is a 5x5x5 grid based on the primitive vectors
+#Definition of the k-point grid
+kptopt 1
+ngkpt 5 5 5       # This is a 5x5x5 grid based on the primitive vectors
 
+################## Determination of the lattice parameters ####################
+
+#optimisation of volume only (do not modify rprim,
+#and allow an homogeneous dilatation of the three components of acell)
+optcell 1
+
+#conduct structural optimization using the Broyden-Fletcher-Goldfarb-Shanno
+#minimization (BFGS). This is much more efficient for structural optimization
+#than viscous damping, when there are less than let's say 10 degrees of freedom
+#to optimize.
+ionmov 2
+
+#Gives the number of molecular dynamics time steps or Broyden structural
+#optimization steps to be done if ionmovis non-zero.
+ntime 10
+
+#Gives the maximal permitted scaling of the lattice parameters when the cell
+#shape and dimension is varied
+dilatmx 1.05
+
+ecutsm 0.5
+
+###############################################################################
 
 #%%<BEGIN TEST_INFO>
 #%% [setup]
