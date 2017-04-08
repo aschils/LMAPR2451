@@ -38,6 +38,11 @@ toldfe 1.0d-6     # Will stop when, twice in a row, the difference
 
 #Bi is a metal so you should be using a metallic band occupation scheme
 occopt 7
+#if occopt=4, 5, 6, or 7, the broadening is not based on Fermi-Dirac statistics,
+#and tsmear is only a convergence parameter.
+#Always check the convergence of the calculation with respect to this parameter,
+#and simultaneously, with respect to the sampling of k-points (see nkpt)
+tsmear 0.01
 
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
  optforces 1

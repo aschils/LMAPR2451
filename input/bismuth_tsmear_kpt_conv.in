@@ -22,7 +22,7 @@ xred 0.2344 0.2344 0.2344
 ecut 18         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 10          # Maximal number of SCF cycles
+nstep 20          # Maximal number of SCF cycles
 toldfe 1.0d-6     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)
@@ -44,6 +44,31 @@ optforces 1
 
 #Definition of the k-point grid
 kptopt 1
+
+################## Determination of the lattice parameters ####################
+
+#optimisation of volume only (do not modify rprim,
+#and allow an homogeneous dilatation of the three components of acell)
+optcell 1
+
+#conduct structural optimization using the Broyden-Fletcher-Goldfarb-Shanno
+#minimization (BFGS). This is much more efficient for structural optimization
+#than viscous damping, when there are less than let's say 10 degrees of freedom
+#to optimize.
+ionmov 2
+
+#Gives the number of molecular dynamics time steps or Broyden structural
+#optimization steps to be done if ionmovis non-zero.
+ntime 10
+
+#Gives the maximal permitted scaling of the lattice parameters when the cell
+#shape and dimension is varied
+dilatmx 1.1
+
+ecutsm 0.5
+
+###############################################################################
+
 
 #%%<BEGIN TEST_INFO>
 #%% [setup]
