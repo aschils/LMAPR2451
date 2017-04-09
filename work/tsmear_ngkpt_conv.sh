@@ -1,19 +1,26 @@
 #!/bin/bash
 
-#convergence regarding ngkpt if prev_etotal - cur_etotal < delta_etotal_conv"
-delta_etotal_conv="0.01"
+#convergence regarding ngkpt if prev_etotal - cur_etotal < delta_conv"
+#convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv
+#for all i
+delta_conv="0.001"
 
+#current values of ngkpt and tsmear are append to this file
 ref_in_file="../input/bismuth_tsmear_kpt_conv.in"
 
-#path of input file with current value of ngkpt
+#path of input file with current values of ngkpt and tsmear
 temp_input_file_path="temp_input_file.in"
 
-
-tsmear="0.1"
-has_converged_tsmear="0"
+tsmear="0.01"
+has_converged_tsmear="0" #boolean
 prev_acell1="9999999"
 prev_acell2="9999999"
 prev_acell3="9999999"
+
+tsmear_vec=""
+acell_vec=""
+
+first_iter_tsmear=true
 
 while [ "$has_converged_tsmear" -ne "1" ]
 do
@@ -54,23 +61,17 @@ tbase1_x
     #delete temporary .in file
     rm $temp_input_file_path
 
-#     output_file_str=$(cat $output_file_path)
-#     last_part_output_file_str=$(
-#     python << END
-# output_file_str = """$output_file_str"""
-# output_file_str = output_file_str.split("OUTPUT")
-# print(output_file_str[len(output_file_str)-1])
-# END
-# )
-
+    #if abinit simulation without failure, final values are available under
+    #the string "END DATASET(S)" in the input file.
     cur_etotal=$(sed -n -e '/END DATASET(S)/,$p' $output_file_path | awk '{for(i=1;i<=NF;i++) if ($i=="etotal") print $(i+1)}')
     #From scientific notation to decimal, bc does not handle correctly scientific notation
     cur_etotal=$(python -c "print '%.16f' % float('$cur_etotal')")
     delta_etotal=$(python -c "print '%.16f' % abs(float('$prev_etotal') - float('$cur_etotal'))")
-    bc_arg="$delta_etotal < $delta_etotal_conv"
+    #Check if convergence condition achieved using bc (bash not able to perform float arithmetic)
+    bc_arg="$delta_etotal < $delta_conv"
     has_converged_ngkpt=$(bc <<< $bc_arg)
 
-
+    #Build vectors of data for plots
     if $first_iter_ngkpt;
     then
       ngkpt_vec="$ngkpt"
@@ -88,40 +89,75 @@ tbase1_x
     ((ngkpt++))
   done
 
+  #Retrieve line of output file with components of the "acell" vector
   acell_line=$(sed -n -e '/END DATASET(S)/,$p' $output_file_path | grep " acell ")
-  #acell_line=$(grep " acell " $output_file_path)
 
   echo $acell_line
 
-  python_out=$(
-  python << END
+  #Check convergence condition for tsmear using python: tsmear has converged if for
+  #each component of the vector "acell", the previous value of the component
+  #differs from the current value in absolute value by less than delta_conv
+  python_out=$(python << END
+  #Keep only vector components and turns list of strings to list of floats
 acells_line = "$acell_line"
 acells = acells_line.split(' ')
 acells = filter(None, acells) #remove empty strings from list
 acells.pop(0) #remove useless acell keyword
 acells.pop(len(acells)-1) #remove useless Bohr keyword
 acells = map(float, acells)
-acell1_conv = abs(float("$prev_acell1")-acells[0]) < float("$delta_etotal_conv")
-acell2_conv = abs(float("$prev_acell2")-acells[1]) < float("$delta_etotal_conv")
-acell3_conv = abs(float("$prev_acell3")-acells[2]) < float("$delta_etotal_conv")
+
+#Check convergence condition
+acell1_conv = abs(float("$prev_acell1")-acells[0]) < float("$delta_conv")
+acell2_conv = abs(float("$prev_acell2")-acells[1]) < float("$delta_conv")
+acell3_conv = abs(float("$prev_acell3")-acells[2]) < float("$delta_conv")
 tsmear_converged = acell1_conv and acell2_conv and acell3_conv
+
+#Output of python script: is tsmear converged?
 if tsmear_converged:
   print("1")
 else:
   print("0")
 
+#Output components of acell
 print(acells[0])
 print(acells[1])
 print(acells[2])
-END
-)
+END)
 
   #echo "$prev_acell1 $prev_acell2 $prev_acell3"
   #echo "$python_out"
+  #Retrieve values output by python script
   has_converged_tsmear=$(echo "$python_out" | sed '1q;d')
   prev_acell1=$(echo "$python_out" | sed '2q;d')
   prev_acell2=$(echo "$python_out" | sed '3q;d')
   prev_acell3=$(echo "$python_out" | sed '4q;d')
 
-  tsmear=$(bc <<< "$tsmear+0.1")
+  #Build vectors to plot acell_i versus tsmear
+  if $first_iter_tsmear;
+  then
+    tsmear_vec="$tsmear"
+    acell_vec="$prev_acell1"
+    first_iter_tsmear=false
+  else
+    tsmear_vec="$tsmear_vec $tsmear"
+    acell_vec="$acell_vec $prev_acell1"
+  fi
+
+  tsmear=$(bc <<< "$tsmear+0.01")
 done
+
+python << END
+
+import matplotlib.pyplot as plt
+
+tsmear_vec = map(float, "$tsmear_vec".split(' '))
+acell_vec= map(float, "$acell_vec".split(' '))
+
+print(tsmear_vec)
+print(acell_vec)
+
+plt.plot(tsmear_vec, acell_vec, 'ro')
+plt.xlabel('tsmear (Ha)')
+plt.ylabel('acell (Bohr)')
+plt.savefig('../figures/tsmear_conv.png')
+END
