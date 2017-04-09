@@ -74,8 +74,8 @@ etotal_vec= map(float, "$etotal_vec".split(' '))
 print(ecut_vec)
 print(etotal_vec)
 
-plt.plot(ecut_vec, etotal_vec)
+plt.plot(ecut_vec, etotal_vec, 'ro')
 plt.xlabel('ecut')
 plt.ylabel('etotal')
-plt.show()
+plt.savefig('../figures/ecut_conv.png')
 END

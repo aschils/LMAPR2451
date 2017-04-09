@@ -74,8 +74,8 @@ etotal_vec= map(float, "$etotal_vec".split(' '))
 print(ngkpt_vec)
 print(etotal_vec)
 
-plt.plot(ngkpt_vec, etotal_vec)
+plt.plot(ngkpt_vec, etotal_vec, 'ro')
 plt.xlabel('ngkpt')
 plt.ylabel('etotal')
-plt.show()
+plt.savefig('../figures/ngkpt_conv.png')
 END
