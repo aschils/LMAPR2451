@@ -182,6 +182,8 @@ for i in range(0, len(ngkpt_vec_vec)):
   etotal_vec = map(float, etotal_vec_vec[i].split(' '))
   label_str = "tsmear "+str(tsmear_vec[i])
   plt.plot(ngkpt_vec, etotal_vec, 'o', label=label_str)
+  plt.plot(ngkpt_vec, etotal_vec, 'k')
+  
 plt.xlabel('ngkpt')
 plt.ylabel('etotal (Ha)')
 plt.legend()
