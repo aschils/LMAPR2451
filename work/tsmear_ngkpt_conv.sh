@@ -1,9 +1,13 @@
 #!/bin/bash
 
-#convergence regarding ngkpt if prev_etotal - cur_etotal < delta_conv"
-#convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv
+#convergence regarding ngkpt if prev_etotal - cur_etotal < delta_conv_etotal"
+#convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv_acell
 #for all i
-delta_conv="0.001"
+delta_conv_etotal="0.001"
+delta_conv_acell="0.015"
+#delta_conv_etotal="0.1"
+#delta_conv_acell="0.1"
+
 
 #current values of ngkpt and tsmear are append to this file
 ref_in_file="../input/bismuth_tsmear_kpt_conv.in"
@@ -19,6 +23,8 @@ prev_acell3="9999999"
 
 tsmear_vec=""
 acell_vec=""
+ngkpt_vec=""
+etotal_vec=""
 
 first_iter_tsmear=true
 
@@ -31,8 +37,6 @@ do
   prev_etotal="9999999"
   cur_etotal="0"
   has_converged_ngkpt="0"
-  ngkpt_vec=""
-  etotal_vec=""
 
   first_iter_ngkpt=true
 
@@ -68,14 +72,14 @@ tbase1_x
     cur_etotal=$(python -c "print '%.16f' % float('$cur_etotal')")
     delta_etotal=$(python -c "print '%.16f' % abs(float('$prev_etotal') - float('$cur_etotal'))")
     #Check if convergence condition achieved using bc (bash not able to perform float arithmetic)
-    bc_arg="$delta_etotal < $delta_conv"
+    bc_arg="$delta_etotal < $delta_conv_etotal"
     has_converged_ngkpt=$(bc <<< $bc_arg)
 
     #Build vectors of data for plots
     if $first_iter_ngkpt;
     then
-      ngkpt_vec="$ngkpt"
-      etotal_vec="$cur_etotal"
+      ngkpt_vec="$ngkpt_vec$ngkpt"
+      etotal_vec="$etotal_vec$cur_etotal"
       first_iter_ngkpt=false
     else
       ngkpt_vec="$ngkpt_vec $ngkpt"
@@ -83,7 +87,7 @@ tbase1_x
     fi
 
     echo "ngktp $ngkpt"
-    echo $cur_etotal
+    echo "etotal $cur_etotal"
 
     prev_etotal=$cur_etotal
     ((ngkpt++))
@@ -96,7 +100,7 @@ tbase1_x
 
   #Check convergence condition for tsmear using python: tsmear has converged if for
   #each component of the vector "acell", the previous value of the component
-  #differs from the current value in absolute value by less than delta_conv
+  #differs from the current value in absolute value by less than delta_conv_acell
   python_out=$(python << END
   #Keep only vector components and turns list of strings to list of floats
 acells_line = "$acell_line"
@@ -107,9 +111,9 @@ acells.pop(len(acells)-1) #remove useless Bohr keyword
 acells = map(float, acells)
 
 #Check convergence condition
-acell1_conv = abs(float("$prev_acell1")-acells[0]) < float("$delta_conv")
-acell2_conv = abs(float("$prev_acell2")-acells[1]) < float("$delta_conv")
-acell3_conv = abs(float("$prev_acell3")-acells[2]) < float("$delta_conv")
+acell1_conv = abs(float("$prev_acell1")-acells[0]) < float("$delta_conv_acell")
+acell2_conv = abs(float("$prev_acell2")-acells[1]) < float("$delta_conv_acell")
+acell3_conv = abs(float("$prev_acell3")-acells[2]) < float("$delta_conv_acell")
 tsmear_converged = acell1_conv and acell2_conv and acell3_conv
 
 #Output of python script: is tsmear converged?
@@ -124,8 +128,6 @@ print(acells[1])
 print(acells[2])
 END)
 
-  #echo "$prev_acell1 $prev_acell2 $prev_acell3"
-  #echo "$python_out"
   #Retrieve values output by python script
   has_converged_tsmear=$(echo "$python_out" | sed '1q;d')
   prev_acell1=$(echo "$python_out" | sed '2q;d')
@@ -143,6 +145,12 @@ END)
     acell_vec="$acell_vec $prev_acell1"
   fi
 
+  if [ "$has_converged_tsmear" -ne "1" ]
+  then
+    ngkpt_vec="$ngkpt_vec,"
+    etotal_vec="$etotal_vec,"
+  fi
+
   tsmear=$(bc <<< "$tsmear+0.01")
 done
 
@@ -150,14 +158,33 @@ python << END
 
 import matplotlib.pyplot as plt
 
+#Plot acell_1 versus tsmear
 tsmear_vec = map(float, "$tsmear_vec".split(' '))
 acell_vec= map(float, "$acell_vec".split(' '))
 
-print(tsmear_vec)
-print(acell_vec)
-
-plt.plot(tsmear_vec, acell_vec, 'ro')
+plt.figure(1)
+plt.plot(tsmear_vec, acell_vec, 'bo', tsmear_vec, acell_vec, 'k')
 plt.xlabel('tsmear (Ha)')
 plt.ylabel('acell (Bohr)')
 plt.savefig('../figures/tsmear_conv.png')
+
+#Plot for each tsmear, etotal vs ngkpt
+ngkpt_vec_vec = "$ngkpt_vec".split(",")
+print("ngkpt_vec_vec")
+print(ngkpt_vec_vec)
+etotal_vec_vec = "$etotal_vec".split(",")
+print("etotal_vec_vec")
+print(etotal_vec_vec)
+
+plt.figure(2)
+for i in range(0, len(ngkpt_vec_vec)):
+  ngkpt_vec = map(float, ngkpt_vec_vec[i].split(' '))
+  etotal_vec = map(float, etotal_vec_vec[i].split(' '))
+  label_str = "tsmear "+str(tsmear_vec[i])
+  plt.plot(ngkpt_vec, etotal_vec, 'o', label=label_str)
+plt.xlabel('ngkpt')
+plt.ylabel('etotal (Ha)')
+plt.legend()
+plt.savefig('../figures/tsmear_ngkpt_conv.png')
+
 END
