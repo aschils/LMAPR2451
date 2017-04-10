@@ -42,7 +42,7 @@ occopt 7
 #and tsmear is only a convergence parameter.
 #Always check the convergence of the calculation with respect to this parameter,
 #and simultaneously, with respect to the sampling of k-points (see nkpt)
-tsmear 0.01
+tsmear 0.04
 
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
  optforces 1
