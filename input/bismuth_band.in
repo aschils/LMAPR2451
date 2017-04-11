@@ -23,10 +23,6 @@ ecut 18         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
 nstep 10          # Maximal number of SCF cycles
-toldfe 1.0d-6     # Will stop when, twice in a row, the difference
-                  # between two consecutive evaluations of total energy
-                  # differ by less than toldfe (in Hartree)
-                  # This value is way too large for most realistic studies of materials
 
 #Diemac default value ok since Bi is a metal
 #diemac 2.0        # Although this is not mandatory, it is worth to
@@ -48,32 +44,20 @@ tsmear 0.04
  optforces 1
 
 #Definition of the k-point grid
-kptopt 1
-ngkpt 5 5 5       # This is a 5x5x5 grid based on the primitive vectors
+kptopt -3
+ndivk 30 30 30
+kptbounds  0.5  0.0  0.0 # L point
+           0.0  0.0  0.0 # Gamma point
+           0.0  0.5  0.5 # X point
+           1.0  1.0  1.0 # Gamma point in another cell.
 
-################## Determination of the lattice parameters ####################
 
-#optimisation of volume only (do not modify rprim,
-#and allow an homogeneous dilatation of the three components of acell)
-#optcell 1
-
-#conduct structural optimization using the Broyden-Fletcher-Goldfarb-Shanno
-#minimization (BFGS). This is much more efficient for structural optimization
-#than viscous damping, when there are less than let's say 10 degrees of freedom
-#to optimize.
-ionmov 0
-
-#Gives the number of molecular dynamics time steps or Broyden structural
-#optimization steps to be done if ionmovis non-zero.
-#ntime 10
-
-#Gives the maximal permitted scaling of the lattice parameters when the cell
-#shape and dimension is varied
-#dilatmx 1.05
-
-#ecutsm 0.5
-
-###############################################################################
+prtden 1
+iscf -2
+nband 20
+enunit 1
+tolwfr 1.0d-10
+getden -1
 
 #%%<BEGIN TEST_INFO>
 #%% [setup]
