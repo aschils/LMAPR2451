@@ -1,13 +1,17 @@
 #!/bin/bash
 
 #convergence regarding ecut if prev_etotal - cur_etotal < delta_etotal_conv"
-delta_etotal_conv="0.0001"
+delta_etotal_conv="0.001"
+#Number of points to plot after the converged point
+pts_after_conv="10"
 
 #path of input file with current value of ecut
 temp_input_file_path="temp_input_file.in"
 
 prev_etotal="9999999"
 cur_etotal="0"
+conv_etotal="0"
+conv_ecut="0"
 ecut="1"
 
 has_converged="0"
@@ -15,10 +19,11 @@ has_converged="0"
 ecut_vec=""
 etotal_vec=""
 
+conv_values_saved=false
+
 first_iter=true
 
-while [ "$has_converged" -ne "1" ]
-do
+while [[ "$has_converged" == "0"|| "$pts_after_conv" > "0" ]]; do
 
   output_file_path="../output/bismuth_ecut_$ecut.out"
 
@@ -56,12 +61,23 @@ tbase1_x
     etotal_vec="$etotal_vec $cur_etotal"
   fi
 
-  echo $ecut
-  echo $cur_etotal
+  echo "ecut $ecut"
+  echo "etotal $cur_etotal"
 
   prev_etotal=$cur_etotal
   ((ecut++))
 
+  if $conv_values_saved ;
+  then
+    ((pts_after_conv--))
+  fi
+
+  if [[ "$has_converged" == "1" && $conv_values_saved == false ]] ;
+  then
+    conv_ecut=$ecut
+    conv_etotal=$cur_etotal
+    conv_values_saved=true
+  fi
 done
 
 python << END
@@ -75,7 +91,14 @@ print(ecut_vec)
 print(etotal_vec)
 
 plt.plot(ecut_vec, etotal_vec, 'ro')
+energy_err_interval = $delta_etotal_conv*$conv_etotal
+plt.plot(ecut_vec, [$conv_etotal+energy_err_interval/2.0]*len(ecut_vec))
+plt.plot(ecut_vec, [$conv_etotal-energy_err_interval/2.0]*len(ecut_vec))
+
 plt.xlabel('ecut')
-plt.ylabel('etotal')
-plt.savefig('../figures/ecut_conv.png')
+plt.ylabel('etotal (Ha)')
+plt.savefig('../figures/ecut_conv_lattice.png')
 END
+
+echo "Converged ecut $conv_ecut"
+echo "Converged etotal $conv_etotal"
