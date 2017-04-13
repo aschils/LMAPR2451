@@ -2,12 +2,16 @@
 
 #convergence regarding ngkpt if prev_etotal - cur_etotal < delta_etotal_conv"
 delta_etotal_conv="0.001"
+#Number of points to plot after the converged point
+pts_after_conv="10"
 
 #path of input file with current value of ngkpt
 temp_input_file_path="temp_input_file.in"
 
 prev_etotal="9999999"
 cur_etotal="0"
+conv_etotal="0"
+conv_ngkpt="0"
 ngkpt="1"
 
 has_converged="0"
@@ -15,10 +19,11 @@ has_converged="0"
 ngkpt_vec=""
 etotal_vec=""
 
+conv_values_saved=false
+
 first_iter=true
 
-while [ "$has_converged" -ne "1" ]
-do
+while [[ "$has_converged" == "0"|| "$pts_after_conv" > "0" ]]; do
 
   output_file_path="../output/bismuth_ngkpt_$ngkpt.out"
 
@@ -56,11 +61,23 @@ tbase1_x
     etotal_vec="$etotal_vec $cur_etotal"
   fi
 
-  echo $ngkpt
-  echo $cur_etotal
+  echo "ngkpt $ngkpt"
+  echo "etotal $cur_etotal"
 
   prev_etotal=$cur_etotal
   ((ngkpt++))
+
+  if $conv_values_saved ;
+  then
+    ((pts_after_conv--))
+  fi
+
+  if [[ "$has_converged" == "1" && $conv_values_saved == false ]] ;
+  then
+    conv_ngkpt=$ngkpt
+    conv_etotal=$cur_etotal
+    conv_values_saved=true
+  fi
 
 done
 
@@ -75,7 +92,14 @@ print(ngkpt_vec)
 print(etotal_vec)
 
 plt.plot(ngkpt_vec, etotal_vec, 'ro')
+energy_err_interval = $delta_etotal_conv*$conv_etotal
+plt.plot(ngkpt_vec, [$conv_etotal+energy_err_interval/2.0]*len(ngkpt_vec))
+plt.plot(ngkpt_vec, [$conv_etotal-energy_err_interval/2.0]*len(ngkpt_vec))
+
 plt.xlabel('ngkpt')
 plt.ylabel('etotal')
 plt.savefig('../figures/ngkpt_conv.png')
 END
+
+echo "Converged ngkpt $conv_ngkpt"
+echo "Converged etotal $conv_etotal"

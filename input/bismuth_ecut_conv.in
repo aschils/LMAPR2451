@@ -21,15 +21,15 @@ xred 0.2344 0.2344 0.2344
 #Definition of the planewave basis set
 
 #Definition of the k-point grid
-#kptopt 0          # Enter the k points manually
-#nkpt 1            # Only one k point is needed for isolated system,
+kptopt 0          # Enter the k points manually
+nkpt 1            # Only one k point is needed for isolated system,
                   # taken by default to be 0.0 0.0 0.0
 
-kptopt 1
-ngkpt 5 5 5
+#kptopt 1
+#ngkpt 5 5 5
 
 #Definition of the SCF procedure
-nstep 10          # Maximal number of SCF cycles
+nstep 20          # Maximal number of SCF cycles
 toldfe 1.0d-8     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)

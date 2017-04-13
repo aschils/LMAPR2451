@@ -1,3 +1,3 @@
 
 ecut 16 #calculé en tant que atome isole, un seul point k: kptopt 0, kpt 1
-ecut 17#calculé en tant que cristal: kptopt 1, ngkpt 5 5 5
+ecut 17 #calculé en tant que cristal: kptopt 1, ngkpt 5 5 5

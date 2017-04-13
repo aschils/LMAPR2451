@@ -97,7 +97,7 @@ plt.plot(ecut_vec, [$conv_etotal-energy_err_interval/2.0]*len(ecut_vec))
 
 plt.xlabel('ecut')
 plt.ylabel('etotal (Ha)')
-plt.savefig('../figures/ecut_conv_lattice.png')
+plt.savefig('../figures/ecut_conv.png')
 END
 
 echo "Converged ecut $conv_ecut"

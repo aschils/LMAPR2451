@@ -19,11 +19,11 @@ xred 0.2344 0.2344 0.2344
      0.7656 0.7656 0.7656
 
 #Definition of the planewave basis set
-ecut 18         # Maximal plane-wave kinetic energy cut-off, in Hartree
+ecut 17         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 10          # Maximal number of SCF cycles
-toldfe 1.0d-6     # Will stop when, twice in a row, the difference
+nstep 20          # Maximal number of SCF cycles
+toldfe 1.0d-8     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)
                   # This value is way too large for most realistic studies of materials
