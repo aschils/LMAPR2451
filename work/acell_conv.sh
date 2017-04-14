@@ -1,5 +1,9 @@
 #!/bin/bash
 
+potential_path="../psps/LDA/83bi.pspnc"
+input_f_path="../input/bismuth_acell_conv.in"
+acell_conv_fig_path="../figures/acell_conv.png"
+
 #convergence regarding acell if prev_etotal - cur_etotal < delta_etotal_conv"
 delta_etotal_conv="1"
 #Number of points to plot after the converged point
@@ -39,10 +43,11 @@ $output_file_path
 tbase1_xi
 tbase1_xo
 tbase1_x
-../psps/LDA/83bi.pspnc"
+$potential_path"
 
   #add acell value to reference .in file, thus building the temporary .in file
-  { cat ../input/bismuth_acell_conv.in; echo "acell $acell $acell $acell angstrom"; } > $temp_input_file_path
+  { cat $input_f_path; echo "acell $acell $acell $acell angstrom"; } > $temp_input_file_path
+
   #launch abinit with acell value of current iteration
   log="log_acell_$acell"
   echo "$abinit_files" | abinit >& $log
@@ -107,7 +112,7 @@ plt.plot(acell_vec, etotal_vec, 'bo')
 
 plt.xlabel('acell (angstrom)')
 plt.ylabel('etotal (Ha)')
-plt.savefig('../figures/acell_conv.png')
+plt.savefig("$acell_conv_fig_path")
 END
 
 echo "Converged acell $conv_acell"
