@@ -4,9 +4,11 @@
 #convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv_acell
 #for all i
 delta_conv_etotal="0.001"
-delta_conv_acell="0.015"
-#delta_conv_etotal="0.1"
-#delta_conv_acell="0.1"
+delta_conv_acell="0.003"
+#delta_conv_etotal="0.5"
+#delta_conv_acell="0.5"
+
+pts_after_conv="5"
 
 
 #current values of ngkpt and tsmear are append to this file
@@ -15,7 +17,9 @@ ref_in_file="../input/bismuth_tsmear_kpt_conv.in"
 #path of input file with current values of ngkpt and tsmear
 temp_input_file_path="temp_input_file.in"
 
-tsmear="0.01"
+tsmear="0.5"
+conv_tsmear="0"
+conv_acell="0"
 has_converged_tsmear="0" #boolean
 prev_acell1="9999999"
 prev_acell2="9999999"
@@ -28,8 +32,10 @@ etotal_vec=""
 
 first_iter_tsmear=true
 
-while [ "$has_converged_tsmear" -ne "1" ]
-do
+conv_values_saved="0"
+
+tsmear_gt_zero=$(bc <<< "$tsmear > 0")
+while [[ "$has_converged_tsmear" == "0" || "$pts_after_conv" > "0" && "$tsmear_gt_zero" == "1" ]]; do
 
   echo "tsmear $tsmear"
 
@@ -90,6 +96,7 @@ tbase1_x
     echo "etotal $cur_etotal"
 
     prev_etotal=$cur_etotal
+
     ((ngkpt++))
   done
 
@@ -145,14 +152,27 @@ END)
     acell_vec="$acell_vec $prev_acell1"
   fi
 
-  if [ "$has_converged_tsmear" -ne "1" ]
+
+  ngkpt_vec="$ngkpt_vec,"
+  etotal_vec="$etotal_vec,"
+
+  if [[ "$conv_values_saved" == "1" ]] ;
   then
-    ngkpt_vec="$ngkpt_vec,"
-    etotal_vec="$etotal_vec,"
+    ((pts_after_conv--))
   fi
 
-  tsmear=$(bc <<< "$tsmear+0.01")
+  if [[ "$has_converged_tsmear" == "1" && "$conv_values_saved" == "0" ]] ;
+  then
+    conv_tsmear=$tsmear
+    conv_acell=$prev_acell1
+    conv_values_saved="1"
+  fi
+
+  tsmear=$(bc <<< "$tsmear-0.005")
+  tsmear_gt_zero=$(bc <<< "$tsmear > 0")
 done
+
+#remove last ","
 
 python << END
 
@@ -164,15 +184,21 @@ acell_vec= map(float, "$acell_vec".split(' '))
 
 plt.figure(1)
 plt.plot(tsmear_vec, acell_vec, 'bo', tsmear_vec, acell_vec, 'k')
+acell_err_interval = $delta_conv_acell*$conv_acell
+plt.plot(tsmear_vec, [$conv_acell+acell_err_interval/2.0]*len(tsmear_vec))
+plt.plot(tsmear_vec, [$conv_acell-acell_err_interval/2.0]*len(tsmear_vec))
+
 plt.xlabel('tsmear (Ha)')
 plt.ylabel('acell (Bohr)')
 plt.savefig('../figures/tsmear_conv.png')
 
 #Plot for each tsmear, etotal vs ngkpt
-ngkpt_vec_vec = "$ngkpt_vec".split(",")
+ngkpt_vec_vec = "$ngkpt_vec"[:-1]
+ngkpt_vec_vec = ngkpt_vec_vec.split(",")
 print("ngkpt_vec_vec")
 print(ngkpt_vec_vec)
-etotal_vec_vec = "$etotal_vec".split(",")
+etotal_vec_vec = "$etotal_vec"[:-1]
+etotal_vec_vec = etotal_vec_vec.split(",")
 print("etotal_vec_vec")
 print(etotal_vec_vec)
 
@@ -183,10 +209,13 @@ for i in range(0, len(ngkpt_vec_vec)):
   label_str = "tsmear "+str(tsmear_vec[i])
   plt.plot(ngkpt_vec, etotal_vec, 'o', label=label_str)
   plt.plot(ngkpt_vec, etotal_vec, 'k')
-  
+
 plt.xlabel('ngkpt')
 plt.ylabel('etotal (Ha)')
 plt.legend()
 plt.savefig('../figures/tsmear_ngkpt_conv.png')
 
 END
+
+echo "Conv acell $conv_acell"
+echo "Conv tsmear $conv_tsmear"

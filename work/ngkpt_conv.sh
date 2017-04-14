@@ -65,7 +65,6 @@ tbase1_x
   echo "etotal $cur_etotal"
 
   prev_etotal=$cur_etotal
-  ((ngkpt++))
 
   if $conv_values_saved ;
   then
@@ -78,6 +77,8 @@ tbase1_x
     conv_etotal=$cur_etotal
     conv_values_saved=true
   fi
+
+  ((ngkpt++))
 
 done
 

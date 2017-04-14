@@ -19,22 +19,16 @@ xred 0.2344 0.2344 0.2344
      0.7656 0.7656 0.7656
 
 #Definition of the planewave basis set
-ecut 18         # Maximal plane-wave kinetic energy cut-off, in Hartree
+ecut 16         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
 nstep 20          # Maximal number of SCF cycles
-toldfe 1.0d-6     # Will stop when, twice in a row, the difference
+toldfe 1.0d-8     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)
                   # This value is way too large for most realistic studies of materials
 
 #Diemac default value ok since Bi is a metal
-#diemac 2.0        # Although this is not mandatory, it is worth to
-                  # precondition the SCF cycle. The model dielectric
-                  # function used as the standard preconditioner
-                  # is described in the "dielng" input variable section.
-                  # Here, we follow the prescriptions for molecules
-                  # in a big box
 
 #Bi is a metal so you should be using a metallic band occupation scheme
 occopt 7
