@@ -20,7 +20,7 @@ with abiopen(filename) as ncfile:
 
 # Plot the band energies. Note that the labels for the k-points
 # are found automatically in an internal database.
-ebands.plot(title="Silicon band structure", savefig=project_dir_path+"figures/band_structure.png", show=False)
+ebands.plot(title="Bismuth band structure", savefig=project_dir_path+"figures/band_structure.png", show=False)
 
 # Plot the BZ and the k-point path.
 #ebands.kpoints.plot()

@@ -1,6 +1,6 @@
 
 #Definition of the unit cell (data from https://materialsproject.org/materials/mp-23152/)
-acell 4.798E+00 4.798E+00 4.798E+00 angstrom
+acell 8.9198420305 8.9198420305 8.9198420305
 angdeg 57.263 57.263 57.263
 
 #Definition of the atom types
@@ -55,11 +55,11 @@ ngkpt 5 5 5       # This is a 5x5x5 grid based on the primitive vectors
 #minimization (BFGS). This is much more efficient for structural optimization
 #than viscous damping, when there are less than let's say 10 degrees of freedom
 #to optimize.
-ionmov 0
+#ionmov 2
 
 #Gives the number of molecular dynamics time steps or Broyden structural
 #optimization steps to be done if ionmovis non-zero.
-#ntime 10
+#ntime 20
 
 #Gives the maximal permitted scaling of the lattice parameters when the cell
 #shape and dimension is varied

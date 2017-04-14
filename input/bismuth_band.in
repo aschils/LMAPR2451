@@ -1,6 +1,6 @@
 
 #Definition of the unit cell (data from https://materialsproject.org/materials/mp-23152/)
-acell 4.798E+00 4.798E+00 4.798E+00 angstrom
+acell 8.9198420305 8.9198420305 8.9198420305
 angdeg 57.263 57.263 57.263
 
 #Definition of the atom types
@@ -19,18 +19,12 @@ xred 0.2344 0.2344 0.2344
      0.7656 0.7656 0.7656
 
 #Definition of the planewave basis set
-ecut 18         # Maximal plane-wave kinetic energy cut-off, in Hartree
+ecut 16         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 10          # Maximal number of SCF cycles
+nstep 20          # Maximal number of SCF cycles
 
 #Diemac default value ok since Bi is a metal
-#diemac 2.0        # Although this is not mandatory, it is worth to
-                  # precondition the SCF cycle. The model dielectric
-                  # function used as the standard preconditioner
-                  # is described in the "dielng" input variable section.
-                  # Here, we follow the prescriptions for molecules
-                  # in a big box
 
 #Bi is a metal so you should be using a metallic band occupation scheme
 occopt 7
@@ -38,7 +32,7 @@ occopt 7
 #and tsmear is only a convergence parameter.
 #Always check the convergence of the calculation with respect to this parameter,
 #and simultaneously, with respect to the sampling of k-points (see nkpt)
-tsmear 0.04
+tsmear 0.015
 
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
  optforces 1
@@ -46,10 +40,15 @@ tsmear 0.04
 #Definition of the k-point grid
 kptopt -3
 ndivk 30 30 30
-kptbounds  0.5  0.0  0.0 # L point
-           0.0  0.0  0.0 # Gamma point
-           0.0  0.5  0.5 # X point
-           1.0  1.0  1.0 # Gamma point in another cell.
+
+#i)  a > sqrt(2) *c :  Gamma =(0,0,0),  Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (0,1/2, 1/2).
+#ii) sqrt(2) * > a:   Gamma =(0,0,0), Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (1/2, 1/2, 0
+
+kptbounds   0.0  0.0  0.0 # Gamma point
+            #0.1666667  0.333333  0.1666667 # L point
+            0    0.5  0   #L point
+            0.5  0.5  0.5 # Z point
+            1.0  1.0  1.0 # Gamma point in another cell.
 
 
 prtden 1
