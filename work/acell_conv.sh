@@ -103,10 +103,7 @@ etotal_vec= map(float, "$etotal_vec".split(' '))
 print(acell_vec)
 print(etotal_vec)
 
-plt.plot(acell_vec, etotal_vec, 'ro')
-energy_err_interval = $delta_etotal_conv*$conv_etotal
-plt.plot(acell_vec, [$conv_etotal+energy_err_interval/2.0]*len(acell_vec))
-plt.plot(acell_vec, [$conv_etotal-energy_err_interval/2.0]*len(acell_vec))
+plt.plot(acell_vec, etotal_vec, 'bo')
 
 plt.xlabel('acell (angstrom)')
 plt.ylabel('etotal (Ha)')
