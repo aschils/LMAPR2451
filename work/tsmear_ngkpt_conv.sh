@@ -5,14 +5,24 @@
 #for all i
 delta_conv_etotal="0.001"
 delta_conv_acell="0.003"
-#delta_conv_etotal="0.5"
-#delta_conv_acell="0.5"
+
 
 pts_after_conv="5"
 
 
+#Without spin orbit coupling
 #current values of ngkpt and tsmear are append to this file
-ref_in_file="../input/bismuth_tsmear_kpt_conv.in"
+#ref_in_file="../input/bismuth_tsmear_kpt_conv.in"
+#potential_path="../psps/LDA/83bi.pspnc"
+#tsmear_conv_fig_path="../figures/tsmear_conv.png"
+#tsmear_ngkpt_conv_fig_path="../figures/tsmear_ngkpt_conv.png"
+
+#With spin orbit coupling
+ref_in_file="../input/bismuth_tsmear_kpt_conv_so.in"
+potential_path="../psps/HGH/83bi.5.hgh"
+tsmear_conv_fig_path="../figures/tsmear_conv_so.png"
+tsmear_ngkpt_conv_fig_path="../figures/tsmear_ngkpt_conv_so.png"
+
 
 #path of input file with current values of ngkpt and tsmear
 temp_input_file_path="temp_input_file.in"
@@ -58,7 +68,7 @@ $output_file_path
 tbase1_xi
 tbase1_xo
 tbase1_x
-../psps/LDA/83bi.pspnc"
+$potential_path"
 
     #add ngkpt value to reference .in file, thus building the temporary .in file
     { cat $ref_in_file; echo "ngkpt $ngkpt $ngkpt $ngkpt"; } > $temp_input_file_path
@@ -172,8 +182,6 @@ END)
   tsmear_gt_zero=$(bc <<< "$tsmear > 0")
 done
 
-#remove last ","
-
 python << END
 
 import matplotlib.pyplot as plt
@@ -190,7 +198,7 @@ plt.plot(tsmear_vec, [$conv_acell-acell_err_interval/2.0]*len(tsmear_vec))
 
 plt.xlabel('tsmear (Ha)')
 plt.ylabel('acell (Bohr)')
-plt.savefig('../figures/tsmear_conv.png')
+plt.savefig("$tsmear_conv_fig_path")
 
 #Plot for each tsmear, etotal vs ngkpt
 ngkpt_vec_vec = "$ngkpt_vec"[:-1]
@@ -213,7 +221,7 @@ for i in range(0, len(ngkpt_vec_vec)):
 plt.xlabel('ngkpt')
 plt.ylabel('etotal (Ha)')
 plt.legend()
-plt.savefig('../figures/tsmear_ngkpt_conv.png')
+plt.savefig("$tsmear_ngkpt_conv_fig_path")
 
 END
 

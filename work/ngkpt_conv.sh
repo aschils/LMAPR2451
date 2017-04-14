@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#No spin orbit coupling
+#potential_path="../psps/LDA/83bi.pspnc"
+#input_f_path="../input/bismuth_kpt_conv.in"
+#fig_path="../figures/ngkpt_conv.png"
+
+#Spin orbit coupling
+potential_path="../psps/HGH/83bi.5.hgh"
+input_f_path="../input/bismuth_kpt_conv_so.in"
+fig_path="../figures/ngkpt_conv_so.png"
+
 #convergence regarding ngkpt if prev_etotal - cur_etotal < delta_etotal_conv"
 delta_etotal_conv="0.001"
 #Number of points to plot after the converged point
@@ -34,10 +44,10 @@ $output_file_path
 tbase1_xi
 tbase1_xo
 tbase1_x
-../psps/LDA/83bi.pspnc"
+$potential_path"
 
   #add ngkpt value to reference .in file, thus building the temporary .in file
-  { cat ../input/bismuth_kpt_conv.in; echo "ngkpt $ngkpt $ngkpt $ngkpt"; } > $temp_input_file_path
+  { cat $input_f_path; echo "ngkpt $ngkpt $ngkpt $ngkpt"; } > $temp_input_file_path
   #launch abinit with ngkpt value of current iteration
   log="log_ngkpt_$ngkpt"
   echo "$abinit_files" | abinit >& $log
@@ -99,7 +109,7 @@ plt.plot(ngkpt_vec, [$conv_etotal-energy_err_interval/2.0]*len(ngkpt_vec))
 
 plt.xlabel('ngkpt')
 plt.ylabel('etotal')
-plt.savefig('../figures/ngkpt_conv.png')
+plt.savefig("$fig_path")
 END
 
 echo "Converged ngkpt $conv_ngkpt"

@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#No spin orbit coupling
+#input_f_path="../input/bismuth_ecut_conv.in"
+#potential_path="../psps/LDA/83bi.pspnc"
+#fig_path="../figures/ecut_conv.png"
+
+#With spin orbit coupling
+input_f_path="../input/bismuth_ecut_conv_so.in"
+potential_path="../psps/HGH/83bi.5.hgh"
+fig_path="../figures/ecut_conv_so.png"
+
 #convergence regarding ecut if prev_etotal - cur_etotal < delta_etotal_conv"
 delta_etotal_conv="0.001"
 #Number of points to plot after the converged point
@@ -34,10 +44,10 @@ $output_file_path
 tbase1_xi
 tbase1_xo
 tbase1_x
-../psps/LDA/83bi.pspnc"
+$potential_path"
 
   #add ecut value to reference .in file, thus building the temporary .in file
-  { cat ../input/bismuth_ecut_conv.in; echo "ecut $ecut"; } > $temp_input_file_path
+  { cat $input_f_path; echo "ecut $ecut"; } > $temp_input_file_path
   #launch abinit with ecut value of current iteration
   log="log_ecut_$ecut"
   echo "$abinit_files" | abinit >& $log
@@ -98,7 +108,7 @@ plt.plot(ecut_vec, [$conv_etotal-energy_err_interval/2.0]*len(ecut_vec))
 
 plt.xlabel('ecut')
 plt.ylabel('etotal (Ha)')
-plt.savefig('../figures/ecut_conv.png')
+plt.savefig("$fig_path")
 END
 
 echo "Converged ecut $conv_ecut"

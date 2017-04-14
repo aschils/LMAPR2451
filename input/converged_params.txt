@@ -1,6 +1,10 @@
-
+#SANS SPIN ORBIT COUPLING
 ecut 15 #calculé en tant que atome isole, un seul point k: kptopt 0, kpt 1
 ecut 16 #calculé en tant que cristal: kptopt 1, ngkpt 5 5 5
 ngkpt 5 #ngkpt tout seul (sans tsmear), avec ecut 17
 tsmear 0.015
 acell 8.9198420305 #Bohr, 4.718595 amgstrom, pour 4.7 amgstrom etotal est -14.421767368 Ha
+
+
+#AVEC SPIN ORBIT COUPLING
+ecut 10 #calculé avec ngkpt 5 5 5
