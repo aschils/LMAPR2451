@@ -4,7 +4,7 @@
 #convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv_acell
 #for all i
 delta_conv_etotal="0.001"
-delta_conv_acell="0.003"
+delta_conv_acell="0.001"
 
 
 pts_after_conv="5"
@@ -178,7 +178,7 @@ END)
     conv_values_saved="1"
   fi
 
-  tsmear=$(bc <<< "$tsmear-0.005")
+  tsmear=$(bc <<< "$tsmear-0.015")
   tsmear_gt_zero=$(bc <<< "$tsmear > 0")
 done
 
