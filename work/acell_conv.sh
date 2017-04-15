@@ -1,11 +1,19 @@
 #!/bin/bash
 
-potential_path="../psps/LDA/83bi.pspnc"
-input_f_path="../input/bismuth_acell_conv.in"
-acell_conv_fig_path="../figures/acell_conv.png"
+#No spin orbit coupling
+#potential_path="../psps/LDA/83bi.pspnc"
+#input_f_path="../input/bismuth_acell_conv.in"
+#acell_conv_fig_path="../figures/acell_conv.png"
+
+#With spin orbit coupling
+potential_path="../psps/HGH/83bi.5.hgh"
+input_f_path="../input/bismuth_acell_conv_so.in"
+acell_conv_fig_path="../figures/acell_conv_so_refine.png"
+
 
 #convergence regarding acell if prev_etotal - cur_etotal < delta_etotal_conv"
-delta_etotal_conv="1"
+delta_etotal_conv="1" #Don't care about convergence, just take pts_after_conv
+#points for the plot
 #Number of points to plot after the converged point
 pts_after_conv="10"
 
@@ -16,7 +24,7 @@ prev_etotal="9999999"
 cur_etotal="0"
 conv_etotal="0"
 conv_acell="0"
-acell="4.5"
+acell="4.65"
 
 has_converged="0"
 
@@ -95,7 +103,7 @@ $potential_path"
     conv_values_saved=true
   fi
 
-  acell=$(bc <<< "$acell + 0.05")
+  acell=$(bc <<< "$acell + 0.015")
 done
 
 python << END
