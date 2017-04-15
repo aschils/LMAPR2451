@@ -9,5 +9,5 @@ acell 8.9198420305 #Bohr, 4.718595 amgstrom, pour 4.7 amgstrom etotal est -14.42
 #AVEC SPIN ORBIT COUPLING
 ecut 10 #calculé avec ngkpt 5 5 5
 ngkpt 6 6 6
-tsmear 0.035 #ngkpt 5 5 5
-acell 8.8638112608E+00 8.8638112608E+00 8.8638112608E+00 Bohr #4.690527 amgstrom
+tsmear 0.035 #ngkpt 5 5 5-> acell 8.8638112608E+00 8.8638112608E+00 8.8638112608E+00 Bohr #4.690527 amgstrom
+acell 4.725 #Min etotal avec tsmear=0.035 
