@@ -4,7 +4,7 @@
 #convergence regarding tsmear if abs(prev_acell_i - acell_i) < delta_conv_acell
 #for all i
 delta_conv_etotal="0.001"
-delta_conv_acell="0.001"
+delta_conv_acell="0.001" #should be 0.2% du acell converge
 
 
 pts_after_conv="5"

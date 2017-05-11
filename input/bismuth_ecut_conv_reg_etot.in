@@ -21,15 +21,15 @@ xred 0.2344 0.2344 0.2344
 #Definition of the planewave basis set
 
 #Definition of the k-point grid
-kptopt 0          # Enter the k points manually
-nkpt 1            # Only one k point is needed for isolated system,
+#kptopt 0          # Enter the k points manually
+#nkpt 1            # Only one k point is needed for isolated system,
                   # taken by default to be 0.0 0.0 0.0
 
-#kptopt 1
-#ngkpt 5 5 5
+kptopt 1
+ngkpt 5 5 5
 
 #Definition of the SCF procedure
-nstep 20          # Maximal number of SCF cycles
+nstep 200          # Maximal number of SCF cycles
 toldfe 1.0d-8     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)
@@ -41,19 +41,3 @@ occopt 7
 
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
 optforces 1
-
-
-#%%<BEGIN TEST_INFO>
-#%% [setup]
-#%% executable = abinit
-#%% [files]
-#%% files_to_test =
-#%%   tbase1_1.out, tolnlines=  0, tolabs=  0.000e+00, tolrel=  0.000e+00
-#%% psp_files =  01h.pspgth
-#%% [paral_info]
-#%% max_nprocs = 1
-#%% [extra_info]
-#%% authors =
-#%% keywords =
-#%% description =
-#%%<END TEST_INFO>

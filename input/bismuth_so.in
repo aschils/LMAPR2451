@@ -22,7 +22,11 @@ xred      2.3568212005E-01  2.3568212005E-01  2.3568212005E-01
 ecut 10         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 20          # Maximal number of SCF cycles
+nstep 200          # Maximal number of SCF cycles
+toldfe 1.0d-8     # Will stop when, twice in a row, the difference
+                  # between two consecutive evaluations of total energy
+                  # differ by less than toldfe (in Hartree)
+                  # This value is way too large for most realistic studies of materials
 
 #Diemac default value ok since Bi is a metal
 
@@ -38,32 +42,14 @@ tsmear 0.0178
  optforces 1
 
 #Definition of the k-point grid
-kptopt -3
-ndivk 30 30 30
-
-#i)  a > sqrt(2) *c :  Gamma =(0,0,0),  Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (0,1/2, 1/2).
-#ii) sqrt(2) * > a:   Gamma =(0,0,0), Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (1/2, 1/2, 0
-
-kptbounds   0.0  0.0  0.0 # Gamma point
-            #0.1666667  0.333333  0.1666667 # L point
-            0    0.5  0   #L point
-            0.5  0.5  0.5 # Z point
-            1.0  1.0  1.0 # Gamma point in another cell.
-
-
-prtden 1
-iscf -2
-nband 20
-enunit 1
-tolwfr 1.0d-10
-getden -1
+kptopt 1
+ngkpt 5 5 5       # This is a 5x5x5 grid based on the primitive vectors
 
 #Spin orbit coupling
 nspinor 2
 nspden 1 #no spin magnetisation
 nsppol 1 #no colinear
 so_psp 2 #treat spin-orbit in the HGH form
-
 
 #%%<BEGIN TEST_INFO>
 #%% [setup]

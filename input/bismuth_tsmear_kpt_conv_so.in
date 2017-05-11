@@ -22,7 +22,7 @@ xred 0.2344 0.2344 0.2344
 ecut 10         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 20          # Maximal number of SCF cycles
+nstep 200          # Maximal number of SCF cycles
 toldfe 1.0d-8     # Will stop when, twice in a row, the difference
                   # between two consecutive evaluations of total energy
                   # differ by less than toldfe (in Hartree)
@@ -49,7 +49,7 @@ optcell 1
 #minimization (BFGS). This is much more efficient for structural optimization
 #than viscous damping, when there are less than let's say 10 degrees of freedom
 #to optimize.
-ionmov 2
+ionmov 3
 
 #Gives the number of molecular dynamics time steps or Broyden structural
 #optimization steps to be done if ionmovis non-zero.

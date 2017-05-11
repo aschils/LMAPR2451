@@ -1,6 +1,6 @@
 
 #Definition of the unit cell (data from https://materialsproject.org/materials/mp-23152/)
-acell 8.9198420305 8.9198420305 8.9198420305
+acell  8.8955646207E+00  8.8955646207E+00  8.8955646207E+00 Bohr
 angdeg 57.263 57.263 57.263
 
 #Definition of the atom types
@@ -15,14 +15,14 @@ znucl 83          # The keyword "znucl" refers to the atomic number of the
 natom 2           # There are two atoms
 typat 1 1         # They both are of type 1
 
-xred 0.2344 0.2344 0.2344
-     0.7656 0.7656 0.7656
+xred  2.3568212005E-01  2.3568212005E-01  2.3568212005E-01
+      7.6431787995E-01  7.6431787995E-01  7.6431787995E-01
 
 #Definition of the planewave basis set
 ecut 16         # Maximal plane-wave kinetic energy cut-off, in Hartree
 
 #Definition of the SCF procedure
-nstep 20          # Maximal number of SCF cycles
+nstep 200          # Maximal number of SCF cycles
 
 #Diemac default value ok since Bi is a metal
 
@@ -32,7 +32,7 @@ occopt 7
 #and tsmear is only a convergence parameter.
 #Always check the convergence of the calculation with respect to this parameter,
 #and simultaneously, with respect to the sampling of k-points (see nkpt)
-tsmear 0.015
+tsmear 0.0178
 
 # add to conserve old < 6.7.2 behavior for calculating forces at each SCF step
  optforces 1
@@ -44,16 +44,24 @@ ndivk 30 30 30
 #i)  a > sqrt(2) *c :  Gamma =(0,0,0),  Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (0,1/2, 1/2).
 #ii) sqrt(2) * > a:   Gamma =(0,0,0), Z= (1/2, 1/2, 1/2), L = (0, 1/2, 0), F = (1/2, 1/2, 0
 
-kptbounds   0.0  0.0  0.0 # Gamma point
+#kptbounds   0.0  0.0  0.0 # Gamma point
             #0.1666667  0.333333  0.1666667 # L point
-            0    0.5  0   #L point
-            0.5  0.5  0.5 # Z point
-            1.0  1.0  1.0 # Gamma point in another cell.
+#            0    0.5  0   #L point
+#            0.5  0.5  0.5 # Z point
+#            1.0  1.0  1.0 # Gamma point in another cell.
+            #B point:
 
+kptbounds 0 0 0 # GAMMA
+          0 0.5 0.5 # X
+          0 0.6298982 0.3701018 # K
+          0.5 0.5 0.5 # T
+          0.2402036 0.7597964 0.5 # X
+          0 0.5 0 # L
 
 prtden 1
 iscf -2
-nband 20
+nband 20 #faut le mettre à plus, 100 avec SOC
+#nbdbuff 4
 enunit 1
 tolwfr 1.0d-10
 getden -1

@@ -18,9 +18,19 @@ filename = abidata.ref_file(project_dir_path+"work/tbase1_xo2_GSR.nc")
 with abiopen(filename) as ncfile:
     ebands = ncfile.ebands
 
+#kptbounds 0 0 0 # GAMMA
+#          0 0.5 0.5 # X
+#          0 0.6298982 0.3701018 # K
+#          0.5 0.5 0.5 # T
+#          0.2402036 0.7597964 0.5 # X
+#          0 0.5 0 # L
+
+klabels_arg = {(0,0,0): "$Gamma$", (0,0.5,0.5): "X", (0,0.6298982,0.3701018): "K", (0.5,0.5,0.5): "T",
+(0.2402036,0.7597964,0.5): "X", (0,0.5,0): "L"}
+
 # Plot the band energies. Note that the labels for the k-points
 # are found automatically in an internal database.
-ebands.plot(title="Bismuth band structure (SO)", savefig=project_dir_path+"figures/band_structure_so.png", show=False)
+ebands.plot(title="Bismuth band structure", savefig=project_dir_path+"figures/band_structure_so.png", show=False, klabels=klabels_arg)
 
 # Plot the BZ and the k-point path.
 #ebands.kpoints.plot()
